@@ -11,8 +11,17 @@ import { RequestModel } from '../models/request';
 const requestModel = new RequestModel();
 const router: Router = Router();
 
-router.get('/request', (req: Request, res: Response) => {
-  res.send({ ok: true, message: 'Welcome to Api Server!', code: HttpStatus.OK });
+router.get('/', async (req: Request, res: Response) => {
+  let db = req.db;
+  let customerId = req.decoded.id;
+
+  try {
+    let rs: any = await requestModel.getList(db, customerId);
+    res.send({ ok: true, rows: rs });
+  } catch (error) {
+    res.send({ ok: false, error: error.message });
+  }
+
 });
 
 // save new request
