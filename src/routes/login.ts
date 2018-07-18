@@ -14,6 +14,54 @@ const jwt = new Jwt();
 
 const router: Router = Router();
 
+router.post('/', async (req: Request, res: Response) => {
+  let db = req.db;
+  let username: string = req.body.username;
+  let password: string = req.body.password;
+  let typeId: string = req.body.typeId;
+
+  let encPassword = crypto
+    .createHash('md5')
+    .update(password)
+    .digest('hex');
+
+  let token = null;
+  let isError = false;
+
+  if (typeId == '1') { // admin
+    let rs: any = await loginModel.doTechnicianLogin(db, username, encPassword);
+    if (rs.length) {
+      let playload: any = {};
+      playload.id = rs[0].technician_id;
+      playload.fullname = rs[0].first_name + ' ' + rs[0].last_name;
+      playload.userType = 'admin';
+
+      token = jwt.sign(playload);
+    } else {
+      isError = true;
+    }
+  } else { // staff
+    let rs: any = await loginModel.doCustomerLogin(db, username, encPassword);
+    if (rs.length) {
+      let playload: any = {};
+      playload.id = rs[0].customer_id;
+      playload.fullname = rs[0].first_name + ' ' + rs[0].last_name;
+      playload.userType = 'staff';
+      token = jwt.sign(playload);
+    } else {
+      isError = true;
+    }
+  }
+
+  if (isError) {
+    res.send({ ok: false, error: 'ชื่อผู้ใช้งาน/รหัสผ่าน ไม่ถูกต้อง' });
+  } else {
+    res.send({ ok: true, token: token });
+  }
+
+});
+
+//  staff
 router.post('/customer', async (req: Request, res: Response) => {
   let username: string = req.body.username;
   let password: string = req.body.password;
@@ -29,7 +77,7 @@ router.post('/customer', async (req: Request, res: Response) => {
       let payload = {
         fullname: `${rs[0].first_name} ${rs[0].last_name}`,
         id: rs[0].customer_id,
-        type: 'customer'
+        userType: 'staff'
       }
 
       let token = jwt.sign(payload);
@@ -43,6 +91,7 @@ router.post('/customer', async (req: Request, res: Response) => {
 
 });
 
+// admin
 router.post('/technician', async (req: Request, res: Response) => {
   let username: string = req.body.username;
   let password: string = req.body.password;
@@ -57,7 +106,8 @@ router.post('/technician', async (req: Request, res: Response) => {
 
       let payload = {
         fullname: rs[0].fullname,
-        username: username
+        username: username,
+        userType: 'admin'
       }
 
       let token = jwt.sign(payload);
