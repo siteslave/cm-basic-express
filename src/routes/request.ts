@@ -25,7 +25,7 @@ router.get('/', async (req: Request, res: Response) => {
 });
 
 // save new request
-router.post('/request', async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response) => {
   let code = moment().format('x');
 
   let cause = req.body.cause;
