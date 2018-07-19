@@ -20,6 +20,7 @@ import indexRoute from './routes/index';
 import loginRoute from './routes/login';
 import requestRoute from './routes/request';
 import departmentRoute from './routes/departments';
+import categoryRoute from './routes/categories';
 
 // Assign router to the express.Router() instance
 const app: express.Application = express();
@@ -99,6 +100,8 @@ app.use('/api', checkAuth, requestRoute);
 app.use('/request', checkAuth, requestRoute);
 
 app.use('/departments', departmentRoute);
+app.use('/categories', categoryRoute);
+
 app.use('/', indexRoute);
 
 //error handlers
