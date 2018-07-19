@@ -100,7 +100,7 @@ app.use('/api', checkAuth, requestRoute);
 app.use('/request', checkAuth, requestRoute);
 
 app.use('/departments', departmentRoute);
-app.use('/categories', categoryRoute);
+app.use('/categories', checkAuth, categoryRoute);
 
 app.use('/', indexRoute);
 
