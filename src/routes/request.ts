@@ -27,17 +27,24 @@ router.get('/', async (req: Request, res: Response) => {
 // save new request
 router.post('/request', async (req: Request, res: Response) => {
   let code = moment().format('x');
+
   let cause = req.body.cause;
+  let categoryId = req.body.categoryId;
+  let remark = req.body.remark;
+  // from token
   let customerId = req.decoded.id;
+
   let requestDate = moment().format('YYYY-MM-DD');
   let requestTime = moment().format('HH:mm:ss');
 
   let data: any = {};
   data.request_code = code;
   data.request_cause = cause;
+  data.remark = remark;
   data.customer_id = customerId;
   data.request_date = requestDate;
   data.request_time = requestTime;
+  data.request_category_id = categoryId;
 
   try {
     await requestModel.saveRequest(req.db, data);
