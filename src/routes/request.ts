@@ -14,10 +14,14 @@ const router: Router = Router();
 router.get('/', async (req: Request, res: Response) => {
   let db = req.db;
   let customerId = req.decoded.id;
+  let limit = +req.query.limit || 10;
+  let offset = +req.query.offset || 0;
 
   try {
-    let rs: any = await requestModel.getList(db, customerId);
-    res.send({ ok: true, rows: rs });
+    let rs: any = await requestModel.getList(db, customerId, limit, offset);
+    let rsTotal: any = await requestModel.getTotal(db, customerId);
+    console.log(rsTotal[0].total);
+    res.send({ ok: true, rows: rs, total: rsTotal[0].total });
   } catch (error) {
     res.send({ ok: false, error: error.message });
   }
