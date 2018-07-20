@@ -71,6 +71,22 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
+let checkAdmin = (req: Request, res: Response, next: NextFunction) => {
+  if (req.decoded.userType === 'admin') {
+    next();
+  } else {
+    res.send({ ok: false, error: 'คุณไม่มีสิทธิ์เข้าใช้งาน' });
+  }
+}
+
+let checkStaff = (req: Request, res: Response, next: NextFunction) => {
+  if (req.decoded.userType === 'staff') {
+    next();
+  } else {
+    res.send({ ok: false, error: 'คุณไม่มีสิทธิ์เข้าใช้งาน' });
+  }
+}
+
 let checkAuth = (req: Request, res: Response, next: NextFunction) => {
   let token: string = null;
 
@@ -96,10 +112,14 @@ let checkAuth = (req: Request, res: Response, next: NextFunction) => {
 }
 
 app.use('/login', loginRoute);
-app.use('/api', checkAuth, requestRoute);
-app.use('/request', checkAuth, requestRoute);
 
-app.use('/departments', departmentRoute);
+app.use('/api', checkAuth, requestRoute);
+
+// for staff
+app.use('/request', checkAuth, checkStaff, requestRoute);
+
+// public
+app.use('/departments', checkAuth, departmentRoute);
 app.use('/categories', checkAuth, categoryRoute);
 
 app.use('/', indexRoute);
