@@ -7,6 +7,12 @@ export class RequestModel {
       .insert(data);
   }
 
+  updateRequest(db: Knex, data: any, requestId: any) {
+    return db('requests')
+      .where('request_id', requestId)
+      .update(data);
+  }
+
   removeRequest(db: Knex, requestId: any) {
     return db('requests').where('request_id', requestId).del();
   }

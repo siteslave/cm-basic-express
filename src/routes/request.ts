@@ -98,4 +98,26 @@ router.post('/', async (req: Request, res: Response) => {
 
 });
 
+router.put('/:requestId', async (req: Request, res: Response) => {
+
+  let cause = req.body.cause;
+  let categoryId = req.body.categoryId;
+  let remark = req.body.remark;
+
+  let requestId = req.params.requestId;
+
+  let data: any = {};
+  data.request_cause = cause;
+  data.remark = remark;
+  data.request_category_id = categoryId;
+
+  try {
+    await requestModel.updateRequest(req.db, data, requestId);
+    res.send({ ok: true, code: HttpStatus.OK });
+  } catch (error) {
+    res.send({ ok: false, error: error.message, code: HttpStatus.OK });
+  }
+
+});
+
 export default router;
