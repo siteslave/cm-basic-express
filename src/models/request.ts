@@ -11,6 +11,10 @@ export class RequestModel {
     return db('requests').where('request_id', requestId).del();
   }
 
+  getDetail(db: Knex, requestId: any) {
+    return db('requests').where('request_id', requestId);
+  }
+
   getList(db: Knex, customerId: any, limit: number, offset: number) {
     return db('requests as r')
       .select('r.*', 'rc.request_category_name')

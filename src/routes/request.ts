@@ -54,6 +54,19 @@ router.delete('/:requestId', async (req: Request, res: Response) => {
 
 });
 
+router.get('/:requestId', async (req: Request, res: Response) => {
+  let db = req.db;
+  let requestId = req.params.requestId;
+
+  try {
+    let rs: any = await requestModel.getDetail(db, requestId);
+    res.send({ ok: true, info: rs[0] });
+  } catch (error) {
+    res.send({ ok: false, error: error.message });
+  }
+
+});
+
 // save new request
 router.post('/', async (req: Request, res: Response) => {
   let code = moment().format('x');
